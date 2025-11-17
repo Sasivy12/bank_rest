@@ -1,0 +1,52 @@
+package com.example.bankcards.service;
+
+
+import com.example.bankcards.entity.User;
+import com.example.bankcards.repository.UserRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UserService
+{
+    private UserRepository userRepository;
+
+    public ResponseEntity<String> createUser(User user)
+    {
+        userRepository.save(user);
+
+        return ResponseEntity.ok("User successfully saved");
+    }
+
+    public ResponseEntity<User> getUser(Long userId)
+    {
+       User user = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+
+       return ResponseEntity.ok(user);
+    }
+
+    public ResponseEntity<String> deleteUser(Long userId)
+    {
+        User user = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+
+        userRepository.delete(user);
+
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
+    public ResponseEntity<String> updateUser(Long userId, User updatedUser)
+    {
+        User exisitingUser = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+
+        exisitingUser.setEmail(updatedUser.getEmail());
+        exisitingUser.setRole(updatedUser.getRole());
+        exisitingUser.setFullName(updatedUser.getFullName());
+        exisitingUser.setPassword(exisitingUser.getPassword());
+
+        userRepository.save(exisitingUser);
+
+        return ResponseEntity.ok("User updated successfully");
+    }
+}

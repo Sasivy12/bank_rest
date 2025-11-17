@@ -16,7 +16,7 @@ public class Card
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private Long cardNumber;
+    private String cardNumber;
 
     @ManyToOne
     private User owner;
