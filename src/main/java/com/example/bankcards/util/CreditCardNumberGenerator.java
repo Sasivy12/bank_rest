@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class CreditCardNumberGenerator
 {
-
     private Random random = new Random(System.currentTimeMillis());
 
     public String generate(String bin, int length)
