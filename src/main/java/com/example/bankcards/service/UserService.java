@@ -2,6 +2,7 @@ package com.example.bankcards.service;
 
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,23 +14,18 @@ public class UserService
 {
     private final UserRepository userRepository;
 
-    public ResponseEntity<String> createUser(User user)
-    {
-        userRepository.save(user);
-
-        return ResponseEntity.ok("User successfully saved");
-    }
-
     public ResponseEntity<User> getUser(Long userId)
     {
-       User user = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+       User user = userRepository.findById(userId).orElseThrow(
+               () -> new UserNotFoundException("User not found"));
 
        return ResponseEntity.ok(user);
     }
 
     public ResponseEntity<String> deleteUser(Long userId)
     {
-        User user = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new  UserNotFoundException("User not found"));
 
         userRepository.delete(user);
 
@@ -38,7 +34,8 @@ public class UserService
 
     public ResponseEntity<String> updateUser(Long userId, User updatedUser)
     {
-        User exisitingUser = userRepository.findById(userId).orElseThrow(() -> new  RuntimeException("User not found"));
+        User exisitingUser = userRepository.findById(userId).orElseThrow(
+                () -> new  UserNotFoundException("User not found"));
 
         exisitingUser.setEmail(updatedUser.getEmail());
         exisitingUser.setRole(updatedUser.getRole());
