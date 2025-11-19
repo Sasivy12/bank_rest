@@ -6,9 +6,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,5 +24,11 @@ public class CardController
     public ResponseEntity<String> blockCard(@RequestBody ChangeCardStatusRequest request)
     {
         return cardService.changeCardStatus(request);
+    }
+
+    @DeleteMapping("/card/{cardId}")
+    public ResponseEntity<String> deleteCard(@PathVariable("cardId") Long cardId)
+    {
+        return cardService.deleteCard(cardId);
     }
 }

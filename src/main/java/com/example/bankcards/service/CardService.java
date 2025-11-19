@@ -59,4 +59,14 @@ public class CardService
 
         return ResponseEntity.ok("Card status changed successfully");
     }
+
+    public ResponseEntity<String> deleteCard(Long cardId)
+    {
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        cardRepository.delete(card);
+
+        return ResponseEntity.ok("Card deleted successfully");
+    }
 }
