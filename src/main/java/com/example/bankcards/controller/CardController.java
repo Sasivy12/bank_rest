@@ -1,5 +1,6 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
@@ -21,4 +22,9 @@ public class CardController
         return cardService.createCard(request);
     }
 
+    @PostMapping("/card/status")
+    public ResponseEntity<String> blockCard(@RequestBody ChangeCardStatusRequest request)
+    {
+        return cardService.changeCardStatus(request);
+    }
 }

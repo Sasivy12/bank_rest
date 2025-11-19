@@ -1,10 +1,11 @@
 package com.example.bankcards.service;
 
-
+import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.CardNotFoundException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -47,8 +48,15 @@ public class CardService
         return ResponseEntity.ok(card);
     }
 
-//    public ResponseEntity<String> blockCard()
-//    {
-//
-//    }
+    public ResponseEntity<String> changeCardStatus(ChangeCardStatusRequest request)
+    {
+        Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        card.setStatus(request.getStatus());
+
+        cardRepository.save(card);
+
+        return ResponseEntity.ok("Card status changed successfully");
+    }
 }

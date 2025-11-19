@@ -33,4 +33,12 @@ public class GlobalExceptionHandler
 
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(CardNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCardNotFound(CardNotFoundException ex)
+    {
+        ErrorResponse errorResponse = new ErrorResponse("CARD_NOT_FOUND", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }
