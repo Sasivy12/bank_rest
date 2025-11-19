@@ -29,7 +29,14 @@ public class CardService
         User cardHolder = userRepository.findById(request.getOwnerId()).orElseThrow(
                 ()-> new UserNotFoundException("User not found"));
 
-        card.setCardNumber(generator.generate("220000", 16));
+        String cardNumber = generator.generate("220000", 16);
+        while(cardRepository.existsByCardNumber(cardNumber))
+        {
+            cardNumber = generator.generate("220000", 16);
+        }
+
+        card.setCardNumber(cardNumber);
+
         card.setOwner(cardHolder);
         card.setBalance(0);
         card.setExpirationDate(request.getExpirationDate());
@@ -39,4 +46,9 @@ public class CardService
 
         return ResponseEntity.ok(card);
     }
+
+//    public ResponseEntity<String> blockCard()
+//    {
+//
+//    }
 }
