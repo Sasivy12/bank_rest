@@ -14,6 +14,7 @@ public class UserService
 {
     private final UserRepository userRepository;
 
+
     public ResponseEntity<User> getUser(Long userId)
     {
        User user = userRepository.findById(userId).orElseThrow(
