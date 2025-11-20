@@ -41,4 +41,14 @@ public class GlobalExceptionHandler
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(IncorrectSumException.class)
+    public ResponseEntity<ErrorResponse> handleIncorrectSumException(IncorrectSumException ex)
+    {
+        ErrorResponse errorResponse = new ErrorResponse("INCORRECT_SUM", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+
+    }
+
 }

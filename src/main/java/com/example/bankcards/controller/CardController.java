@@ -3,10 +3,10 @@ package com.example.bankcards.controller;
 import com.example.bankcards.dto.CardPageResponse;
 import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.DepositMoneyRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +48,11 @@ public class CardController
                                                                @RequestParam(defaultValue = "10") int size)
     {
         return cardService.getAllCardsForUser(userId, page, size);
+    }
+
+    @PostMapping("/card/deposit")
+    public ResponseEntity<String> depositMoney(@RequestBody DepositMoneyRequest request)
+    {
+        return cardService.depositMoney(request);
     }
 }

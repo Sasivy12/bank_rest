@@ -3,10 +3,12 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.CardPageResponse;
 import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.DepositMoneyRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.CardNotFoundException;
+import com.example.bankcards.exception.IncorrectSumException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -17,8 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -109,7 +109,24 @@ public class CardService
                 userCards.isLast()
                 );
 
-
         return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<String> depositMoney(DepositMoneyRequest request)
+    {
+        Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        if(request.getSum() > 0)
+        {
+            card.setBalance(card.getBalance() + request.getSum());
+            cardRepository.save(card);
+        }
+        else
+        {
+            throw new IncorrectSumException("Sum of money should be higher than 0!");
+        }
+
+        return ResponseEntity.ok("Sum of: " + request.getSum() + " successfully deposited");
     }
 }
