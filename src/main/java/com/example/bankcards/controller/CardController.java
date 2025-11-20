@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class CardController
@@ -36,5 +38,11 @@ public class CardController
     public ResponseEntity<Double> getCardBalance(@PathVariable("cardId") Long cardId)
     {
         return cardService.getCardBalance(cardId);
+    }
+
+    @GetMapping("/card/user/{userId}")
+    public ResponseEntity<List<Card>> getAllCardsForUser(@PathVariable("userId") Long userId)
+    {
+        return cardService.getAllCardsForUser(userId);
     }
 }

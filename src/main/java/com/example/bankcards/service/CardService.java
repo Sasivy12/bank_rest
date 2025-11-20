@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CardService
@@ -76,5 +78,16 @@ public class CardService
                 () -> new CardNotFoundException("Card not found"));
 
         return ResponseEntity.ok(card.getBalance());
+    }
+
+    public ResponseEntity<List<Card>> getAllCardsForUser(Long userId)
+    {
+        User owner = userRepository.findById(userId).orElseThrow(
+            ()-> new UserNotFoundException("User not found"));
+
+        List<Card> userCards = cardRepository.findByOwner(owner).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        return ResponseEntity.ok(userCards);
     }
 }
