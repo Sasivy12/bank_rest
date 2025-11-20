@@ -69,4 +69,12 @@ public class CardService
 
         return ResponseEntity.ok("Card deleted successfully");
     }
+
+    public ResponseEntity<Double> getCardBalance(Long cardId)
+    {
+        Card card = cardRepository.findById(cardId).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        return ResponseEntity.ok(card.getBalance());
+    }
 }

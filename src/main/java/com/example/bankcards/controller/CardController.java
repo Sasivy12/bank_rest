@@ -31,4 +31,10 @@ public class CardController
     {
         return cardService.deleteCard(cardId);
     }
+
+    @GetMapping("/card/{cardId}")
+    public ResponseEntity<Double> getCardBalance(@PathVariable("cardId") Long cardId)
+    {
+        return cardService.getCardBalance(cardId);
+    }
 }
