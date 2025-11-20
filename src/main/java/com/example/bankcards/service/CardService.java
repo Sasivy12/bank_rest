@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.CardPageResponse;
 import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
@@ -11,6 +12,9 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.CreditCardNumberGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -80,14 +84,32 @@ public class CardService
         return ResponseEntity.ok(card.getBalance());
     }
 
-    public ResponseEntity<List<Card>> getAllCardsForUser(Long userId)
+    public ResponseEntity<CardPageResponse> getAllCardsForUser(Long userId, int page, int size)
     {
         User owner = userRepository.findById(userId).orElseThrow(
             ()-> new UserNotFoundException("User not found"));
 
-        List<Card> userCards = cardRepository.findByOwner(owner).orElseThrow(
-                () -> new CardNotFoundException("Card not found"));
+        Pageable pageable = PageRequest.of(page, size);
 
-        return ResponseEntity.ok(userCards);
+        Page<Card> userCards = cardRepository.findByOwner(owner, pageable);
+
+        if (userCards.isEmpty())
+        {
+            throw new CardNotFoundException("Cards not found");
+        }
+
+        CardPageResponse response = new CardPageResponse
+                (
+                userCards.getContent(),
+                userCards.getNumber(),
+                userCards.getSize(),
+                userCards.getTotalElements(),
+                userCards.getTotalPages(),
+                userCards.isFirst(),
+                userCards.isLast()
+                );
+
+
+        return ResponseEntity.ok(response);
     }
 }

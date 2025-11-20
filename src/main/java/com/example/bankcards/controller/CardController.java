@@ -1,10 +1,12 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.CardPageResponse;
 import com.example.bankcards.dto.ChangeCardStatusRequest;
 import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +43,10 @@ public class CardController
     }
 
     @GetMapping("/card/user/{userId}")
-    public ResponseEntity<List<Card>> getAllCardsForUser(@PathVariable("userId") Long userId)
+    public ResponseEntity<CardPageResponse> getAllCardsForUser(@PathVariable("userId") Long userId,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int size)
     {
-        return cardService.getAllCardsForUser(userId);
+        return cardService.getAllCardsForUser(userId, page, size);
     }
 }
