@@ -1,9 +1,6 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.CardPageResponse;
-import com.example.bankcards.dto.ChangeCardStatusRequest;
-import com.example.bankcards.dto.CreateCardRequest;
-import com.example.bankcards.dto.DepositMoneyRequest;
+import com.example.bankcards.dto.*;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
@@ -55,4 +52,11 @@ public class CardController
     {
         return cardService.depositMoney(request);
     }
+
+    @PostMapping("/card/transfer")
+    public ResponseEntity<String> transferMoney(@RequestBody TransferMoneyRequest request)
+    {
+        return cardService.transferMoney(request);
+    }
+
 }

@@ -48,7 +48,14 @@ public class GlobalExceptionHandler
         ErrorResponse errorResponse = new ErrorResponse("INCORRECT_SUM", ex.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
+    }
 
+    @ExceptionHandler(NotAcceptableTransferException.class)
+    public ResponseEntity<ErrorResponse> handleUnavailableTransferException(NotAcceptableTransferException ex)
+    {
+        ErrorResponse errorResponse = new ErrorResponse("NOT_ACCEPTABLE_TRANSFER", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
 }

@@ -1,14 +1,12 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.CardPageResponse;
-import com.example.bankcards.dto.ChangeCardStatusRequest;
-import com.example.bankcards.dto.CreateCardRequest;
-import com.example.bankcards.dto.DepositMoneyRequest;
+import com.example.bankcards.dto.*;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.CardNotFoundException;
 import com.example.bankcards.exception.IncorrectSumException;
+import com.example.bankcards.exception.NotAcceptableTransferException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -128,5 +126,30 @@ public class CardService
         }
 
         return ResponseEntity.ok("Sum of: " + request.getSum() + " successfully deposited");
+    }
+
+    public ResponseEntity<String> transferMoney(TransferMoneyRequest request)
+    {
+        Card firstCard = cardRepository.findById(request.getFirstCardId()).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        Card secondCard = cardRepository.findById(request.getSecondCardId()).orElseThrow(
+                () -> new CardNotFoundException("Card not found"));
+
+        if(request.getAmount() > 0 && firstCard.getBalance() >= request.getAmount() &&
+                firstCard.getStatus() == CardStatus.ACTIVE && secondCard.getStatus() == CardStatus.ACTIVE)
+        {
+            firstCard.setBalance(firstCard.getBalance() - request.getAmount());
+            secondCard.setBalance(secondCard.getBalance() + request.getAmount());
+
+            cardRepository.save(firstCard);
+            cardRepository.save(secondCard);
+
+            return ResponseEntity.ok("Transfer successfull");
+        }
+        else
+        {
+            throw new NotAcceptableTransferException("Transfer is not acceptable");
+        }
     }
 }

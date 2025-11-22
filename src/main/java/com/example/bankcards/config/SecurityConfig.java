@@ -37,7 +37,8 @@ public class SecurityConfig
                 .requestMatchers(
                         "/register", "/login"
                 ).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest()
+                .authenticated()
         );
 
         http.httpBasic(Customizer.withDefaults());
