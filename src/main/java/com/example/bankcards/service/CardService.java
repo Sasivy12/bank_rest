@@ -10,6 +10,7 @@ import com.example.bankcards.exception.NotAcceptableTransferException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
+import com.example.bankcards.util.CardUtils;
 import com.example.bankcards.util.CreditCardNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -96,18 +100,30 @@ public class CardService
             throw new CardNotFoundException("Cards not found");
         }
 
-        CardPageResponse response = new CardPageResponse
-                (
-                userCards.getContent(),
-                userCards.getNumber(),
-                userCards.getSize(),
-                userCards.getTotalElements(),
-                userCards.getTotalPages(),
-                userCards.isFirst(),
-                userCards.isLast()
-                );
+        List<CardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new CardResponse(
+                        card.getId(),
+                        CardUtils.maskCardNumber(card.getCardNumber()),
+                        card.getOwner().getFullName(),
+                        new SimpleDateFormat("MM/yy").format(card.getExpirationDate()),
+                        card.getBalance(),
+                        card.getStatus()
+                ))
+                .toList();
 
-        return ResponseEntity.ok(response);
+
+
+        return ResponseEntity.ok(new CardPageResponse
+                (
+                    cardResponses,
+                    userCards.getNumber(),
+                    userCards.getSize(),
+                    userCards.getTotalElements(),
+                    userCards.getTotalPages(),
+                    userCards.isFirst(),
+                    userCards.isLast()
+                )
+        );
     }
 
     public ResponseEntity<String> depositMoney(DepositMoneyRequest request)
