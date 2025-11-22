@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>bank_card_management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>bank_rest</artifactId>
+    <version>0.1</version>
     <name>bank_card_management</name>
     <description>Demo project for Spring Boot</description>
     <url/>
