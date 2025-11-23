@@ -1,5 +1,6 @@
 package com.example.bankcards.dto;
 
+import com.example.bankcards.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -23,4 +24,6 @@ public class RegisterRequest
 
     @NotBlank(message = "Full name is required")
     private String fullName;
+
+    private Role role;
 }

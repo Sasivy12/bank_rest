@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -54,6 +55,9 @@ public class UserController
     }
 
     @GetMapping("/user/{user_id}")
+    @PreAuthorize("hasAuthority('USER') " +
+            "and @userService.getUser(#userId).body.email == authentication.principal.username " +
+            "or hasAuthority('ADMIN')")
     @Operation(summary = "Получение пользователя по идентификатору")
     @ApiResponses(value =
             {
@@ -68,6 +72,7 @@ public class UserController
     }
 
     @Operation(summary = "Удаление пользователя")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/user/{user_id}")
     @ApiResponses(value =
             {
@@ -82,6 +87,9 @@ public class UserController
     }
 
     @Operation(summary = "Обновление пользователя")
+    @PreAuthorize("hasAuthority('USER') " +
+            "and @userService.getUser(#userId).body.email == authentication.principal.username " +
+            "or hasAuthority('ADMIN')")
     @PutMapping("/user/{user_id}")
     @ApiResponses(value =
             {

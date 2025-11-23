@@ -32,7 +32,15 @@ public class UserAuthService
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setFullName(request.getFullName());
-        user.setRole(Role.USER);
+
+        if (request.getRole() == null)
+        {
+            user.setRole(Role.USER);
+        }
+        else
+        {
+            user.setRole(request.getRole());
+        }
 
         if(userRepository.existsByEmail(user.getEmail()))
         {
