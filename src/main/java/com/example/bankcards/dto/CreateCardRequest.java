@@ -1,6 +1,7 @@
 package com.example.bankcards.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,6 @@ public class CreateCardRequest
     @NotBlank(message = "User id is required")
     private Long ownerId;
 
-    @NotBlank(message = "Expiration date is required")
+    @NotNull(message = "Expiration date is required")
     private Date expirationDate;
 }
