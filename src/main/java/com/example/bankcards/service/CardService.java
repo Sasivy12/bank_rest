@@ -111,8 +111,6 @@ public class CardService
                 ))
                 .toList();
 
-
-
         return ResponseEntity.ok(new CardPageResponse
                 (
                     cardResponses,

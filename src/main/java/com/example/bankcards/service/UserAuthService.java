@@ -1,6 +1,8 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.dto.LoginRequest;
+import com.example.bankcards.dto.RegisterRequest;
+import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.AuthenticationFailedException;
 import com.example.bankcards.exception.UserAlreadyExistsException;
@@ -24,8 +26,14 @@ public class UserAuthService
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
-    public void register(User user)
+    public void register(RegisterRequest request)
     {
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setPassword(request.getPassword());
+        user.setFullName(request.getFullName());
+        user.setRole(Role.USER);
+
         if(userRepository.existsByEmail(user.getEmail()))
         {
             throw new UserAlreadyExistsException("User with this email: " + user.getEmail() + " already exists");

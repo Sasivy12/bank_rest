@@ -1,12 +1,14 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.LoginRequest;
+import com.example.bankcards.dto.RegisterRequest;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.service.UserAuthService;
 import com.example.bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,11 +33,11 @@ public class UserController
                     @ApiResponse(responseCode = "409", description = "Пользователь с такими email уже существует"),
                     @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
             })
-    public ResponseEntity<String> register(@RequestBody User user)
+    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request)
     {
-        userAuthService.register(user);
+        userAuthService.register(request);
 
-        return ResponseEntity.ok("User " + user.getEmail() + " registered successfully");
+        return ResponseEntity.ok("User " + request.getEmail() + " registered successfully");
     }
 
     @PostMapping("/login")
