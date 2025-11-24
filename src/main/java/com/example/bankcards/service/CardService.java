@@ -198,4 +198,39 @@ public class CardService
             throw new NotAcceptableTransferException("Transfer is not acceptable");
         }
     }
+
+        public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
+    {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Card> userCards = cardRepository.findAll(pageable);
+
+        if (userCards.isEmpty())
+        {
+            throw new CardNotFoundException("Cards not found");
+        }
+
+        List<CardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new CardResponse(
+                        card.getId(),
+                        CardUtils.maskCardNumber(card.getCardNumber()),
+                        card.getOwner().getFullName(),
+                        new SimpleDateFormat("MM/yy").format(card.getExpirationDate()),
+                        card.getBalance(),
+                        card.getStatus()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(new CardPageResponse
+                (
+                        cardResponses,
+                        userCards.getNumber(),
+                        userCards.getSize(),
+                        userCards.getTotalElements(),
+                        userCards.getTotalPages(),
+                        userCards.isFirst(),
+                        userCards.isLast()
+                )
+        );
+    }
 }

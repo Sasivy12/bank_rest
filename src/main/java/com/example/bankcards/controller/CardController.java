@@ -131,4 +131,20 @@ public class CardController
         return cardService.transferMoney(request);
     }
 
+    @GetMapping("/card")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @Operation(summary = "Получение всех карт")
+    @ApiResponses(value =
+            {
+                    @ApiResponse(responseCode = "200", description = "Успешная операция"),
+                    @ApiResponse(responseCode = "401", description = "Нет доступа"),
+                    @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
+                    @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+            })
+    public ResponseEntity<CardPageResponse> getAllCards(@RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size)
+    {
+        return cardService.getAllCards(page, size);
+    }
+
 }
