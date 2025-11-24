@@ -13,7 +13,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class CreateCardRequest
 {
-    @NotBlank(message = "User id is required")
+    @NotNull(message = "User id is required")
     private Long ownerId;
 
     @NotNull(message = "Expiration date is required")

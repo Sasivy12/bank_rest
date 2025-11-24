@@ -58,4 +58,11 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleUnavailableTransferException(AccessDeniedException ex)
+    {
+        ErrorResponse errorResponse = new ErrorResponse("ACCESS_DENIED", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
 }

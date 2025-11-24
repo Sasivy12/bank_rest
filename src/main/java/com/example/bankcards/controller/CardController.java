@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class CardController
     private final CardService cardService;
 
     @PostMapping("/card")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Создание новой карты для пользователя")
     @ApiResponses(value =
             {
@@ -36,6 +38,7 @@ public class CardController
     }
 
     @PostMapping("/card/status")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Обновление статуса карты (ACTIVE, BLOCKED, EXPIRED)")
     @ApiResponses(value =
             {
@@ -50,6 +53,7 @@ public class CardController
     }
 
     @DeleteMapping("/card/{cardId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Удаление карты")
     @ApiResponses(value =
             {
@@ -64,6 +68,7 @@ public class CardController
     }
 
     @GetMapping("/card/{cardId}")
+    @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "Получение баланса карты")
     @ApiResponses(value =
             {
@@ -78,6 +83,7 @@ public class CardController
     }
 
     @GetMapping("/card/user/{userId}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Получение всех карт пользователя")
     @ApiResponses(value =
             {
@@ -94,6 +100,7 @@ public class CardController
     }
 
     @PostMapping("/card/deposit")
+    @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "Пополнение денег на балансе карты")
     @ApiResponses(value =
             {
@@ -109,6 +116,7 @@ public class CardController
     }
 
     @PostMapping("/card/transfer")
+    @PreAuthorize("hasAuthority('USER')")
     @Operation(summary = "Перевод денег с одной карты пользователя на другую")
     @ApiResponses(value =
             {

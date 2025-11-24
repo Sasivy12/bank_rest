@@ -4,10 +4,7 @@ import com.example.bankcards.dto.*;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
-import com.example.bankcards.exception.CardNotFoundException;
-import com.example.bankcards.exception.IncorrectSumException;
-import com.example.bankcards.exception.NotAcceptableTransferException;
-import com.example.bankcards.exception.UserNotFoundException;
+import com.example.bankcards.exception.*;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.CardUtils;
@@ -17,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -83,13 +81,35 @@ public class CardService
         Card card = cardRepository.findById(cardId).orElseThrow(
                 () -> new CardNotFoundException("Card not found"));
 
-        return ResponseEntity.ok(card.getBalance());
+        String currUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(card.getOwner().getEmail().equals(currUserEmail))
+        {
+            return ResponseEntity.ok(card.getBalance());
+        }
+        else
+        {
+            throw new AccessDeniedException("You do not own this card");
+        }
     }
 
     public ResponseEntity<CardPageResponse> getAllCardsForUser(Long userId, int page, int size)
     {
-        User owner = userRepository.findById(userId).orElseThrow(
-            ()-> new UserNotFoundException("User not found"));
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        boolean isAdmin = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+        User owner = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (!owner.getEmail().equals(currentEmail) && !isAdmin)
+        {
+            throw new AccessDeniedException("You can access only your own cards");
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -129,6 +149,13 @@ public class CardService
         Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
                 () -> new CardNotFoundException("Card not found"));
 
+        String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(!card.getOwner().getEmail().equals(currentEmail))
+        {
+            throw new AccessDeniedException("You do not own this card");
+        }
+
         if(request.getSum() > 0)
         {
             card.setBalance(card.getBalance() + request.getSum());
@@ -149,6 +176,11 @@ public class CardService
 
         Card secondCard = cardRepository.findById(request.getSecondCardId()).orElseThrow(
                 () -> new CardNotFoundException("Card not found"));
+
+        if(!firstCard.getOwner().getEmail().equals(secondCard.getOwner().getEmail()))
+        {
+            throw new AccessDeniedException("You can only transfer money to your own cards");
+        }
 
         if(request.getAmount() > 0 && firstCard.getBalance() >= request.getAmount() &&
                 firstCard.getStatus() == CardStatus.ACTIVE && secondCard.getStatus() == CardStatus.ACTIVE)
