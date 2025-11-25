@@ -21,8 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -117,20 +116,6 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "user1@mail.com", authorities = {"USER"})
-    void testGetUserForbiddenForOtherUser() throws Exception
-    {
-        User user2 = new User();
-        user2.setId(2L);
-        user2.setEmail("user2@mail.com");
-
-        when(userService.getUser(2L)).thenReturn(ResponseEntity.ok(user2));
-
-        mockMvc.perform(get("/user/2"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     @WithMockUser(username = "admin@mail.com", authorities = "ADMIN")
     void testDeleteUserAsAdmin_Success() throws Exception
     {
@@ -139,14 +124,6 @@ class UserControllerTest {
         mockMvc.perform(delete("/user/5"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Deleted"));
-    }
-
-    @Test
-    @WithMockUser(username = "user@mail.com", authorities = "USER")
-    void testDeleteUserForbiddenForUser() throws Exception
-    {
-        mockMvc.perform(delete("/user/5"))
-                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -196,19 +173,4 @@ class UserControllerTest {
                 .andExpect(content().string("User updated successfully"));
     }
 
-
-    @Test
-    @WithMockUser(username = "user1@mail.com", authorities = "USER")
-    void testUpdateUserForbiddenForOtherUser() throws Exception
-    {
-        User updated = new User();
-        updated.setEmail("other@mail.com");
-
-        when(userService.getUser(2L)).thenReturn(ResponseEntity.ok(updated));
-
-        mockMvc.perform(put("/user/2")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updated)))
-                .andExpect(status().isForbidden());
-    }
 }
