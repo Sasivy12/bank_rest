@@ -15,6 +15,6 @@ public class TransferMoneyRequest
 
     private Long secondCardId;
 
-    private int amount;
+    private double amount;
 
 }
