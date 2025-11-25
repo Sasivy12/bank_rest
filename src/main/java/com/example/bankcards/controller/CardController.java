@@ -100,7 +100,7 @@ public class CardController
     }
 
     @PostMapping("/card/deposit")
-    @PreAuthorize("hasAuthority('USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @Operation(summary = "Пополнение денег на балансе карты")
     @ApiResponses(value =
             {
@@ -132,7 +132,7 @@ public class CardController
     }
 
     @GetMapping("/card")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Получение всех карт")
     @ApiResponses(value =
             {

@@ -8,6 +8,12 @@ spring:
   application:
     name: bank-card-management
 
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/migration/db.changelog-master.yaml
+    default-schema: public
+    liquibase-schema: public
+
   datasource:
     url: jdbc:postgresql://localhost:5432/bank_rest
     username: super
