@@ -30,7 +30,7 @@ public class CardService
 
     private final CreditCardNumberGenerator generator = new CreditCardNumberGenerator();
 
-    public ResponseEntity<Card> createCard(CreateCardRequest request)
+    public ResponseEntity<CreateCardResponse> createCard(CreateCardRequest request)
     {
         Card card = new Card();
         User cardHolder = userRepository.findById(request.getOwnerId()).orElseThrow(
@@ -51,7 +51,15 @@ public class CardService
 
         cardRepository.save(card);
 
-        return ResponseEntity.ok(card);
+        CreateCardResponse response = new CreateCardResponse(
+                card.getCardNumber(),
+                card.getOwner().getFullName(),
+                new SimpleDateFormat("MM/yy").format(card.getExpirationDate()),
+                card.getBalance(),
+                card.getStatus()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<String> changeCardStatus(ChangeCardStatusRequest request)

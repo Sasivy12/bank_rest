@@ -32,7 +32,7 @@ public class CardController
                     @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
                     @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
             })
-    public ResponseEntity<Card> createCard(@Valid @RequestBody CreateCardRequest request)
+    public ResponseEntity<CreateCardResponse> createCard(@Valid @RequestBody CreateCardRequest request)
     {
         return cardService.createCard(request);
     }
