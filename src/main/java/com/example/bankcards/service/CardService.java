@@ -128,8 +128,8 @@ public class CardService
             throw new CardNotFoundException("Cards not found");
         }
 
-        List<CardResponse> cardResponses = userCards.getContent().stream()
-                .map(card -> new CardResponse(
+        List<GetCardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new GetCardResponse(
                         card.getId(),
                         CardUtils.maskCardNumber(card.getCardNumber()),
                         card.getOwner().getFullName(),
@@ -218,8 +218,8 @@ public class CardService
             throw new CardNotFoundException("Cards not found");
         }
 
-        List<CardResponse> cardResponses = userCards.getContent().stream()
-                .map(card -> new CardResponse(
+        List<GetCardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new GetCardResponse(
                         card.getId(),
                         CardUtils.maskCardNumber(card.getCardNumber()),
                         card.getOwner().getFullName(),
