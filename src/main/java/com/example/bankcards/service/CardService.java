@@ -43,7 +43,6 @@ public class CardService
         }
 
         card.setCardNumber(cardNumber);
-
         card.setOwner(cardHolder);
         card.setBalance(0);
         card.setExpirationDate(request.getExpirationDate());
@@ -97,7 +96,7 @@ public class CardService
         }
         else
         {
-            throw new AccessDeniedException("You do not own this card");
+            throw new UnavailableTransferException("You do not own this card");
         }
     }
 
@@ -116,7 +115,7 @@ public class CardService
 
         if (!owner.getEmail().equals(currentEmail) && !isAdmin)
         {
-            throw new AccessDeniedException("You can access only your own cards");
+            throw new UnavailableTransferException("You can access only your own cards");
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -161,7 +160,7 @@ public class CardService
 
         if(!card.getOwner().getEmail().equals(currentEmail))
         {
-            throw new AccessDeniedException("You do not own this card");
+            throw new UnavailableTransferException("You do not own this card");
         }
 
         if(request.getSum() > 0)
@@ -187,7 +186,7 @@ public class CardService
 
         if(!firstCard.getOwner().getEmail().equals(secondCard.getOwner().getEmail()))
         {
-            throw new AccessDeniedException("You can only transfer money to your own cards");
+            throw new UnavailableTransferException("You can only transfer money to your own cards");
         }
 
         if(request.getAmount() > 0 && firstCard.getBalance() >= request.getAmount() &&
@@ -199,7 +198,7 @@ public class CardService
             cardRepository.save(firstCard);
             cardRepository.save(secondCard);
 
-            return ResponseEntity.ok("Transfer successfull");
+            return ResponseEntity.ok("Transfer successful");
         }
         else
         {
@@ -207,7 +206,7 @@ public class CardService
         }
     }
 
-        public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
+    public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
     {
         Pageable pageable = PageRequest.of(page, size);
 

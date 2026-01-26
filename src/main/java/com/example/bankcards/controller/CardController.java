@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class CardController
     @PostMapping("/card/status")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Обновление статуса карты (ACTIVE, BLOCKED, EXPIRED)")
+    @Transactional
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "200", description = "Успешная операция"),
