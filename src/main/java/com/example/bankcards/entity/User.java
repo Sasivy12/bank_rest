@@ -2,6 +2,7 @@ package com.example.bankcards.entity;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @Table(name = "users")
 @Getter
 @Setter
+@AllArgsConstructor
 public class User
 {
     @Id

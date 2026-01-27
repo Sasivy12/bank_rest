@@ -55,9 +55,7 @@ public class UserController
     }
 
     @GetMapping("/user/{user_id}")
-    @PreAuthorize("hasAuthority('USER') " +
-            "and @userService.getUser(#userId).body.email == authentication.principal.username " +
-            "or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or @userService.isOwner(#userId, authentication)")
     @Operation(summary = "Получение пользователя по идентификатору")
     @ApiResponses(value =
             {

@@ -6,6 +6,7 @@ import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -45,6 +46,13 @@ public class UserService
         userRepository.save(exisitingUser);
 
         return ResponseEntity.ok("User updated successfully");
+    }
+
+    public boolean isOwner(Long userId, Authentication authentication)
+    {
+        return userRepository.findById(userId)
+                .map(u -> u.getEmail().equals(authentication.getName()))
+                .orElse(false);
     }
 
 }

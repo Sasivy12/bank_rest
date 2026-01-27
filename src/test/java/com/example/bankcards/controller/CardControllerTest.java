@@ -175,7 +175,7 @@ class CardControllerTest {
 
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getCardBalance_success() throws Exception
     {
         Long cardId = 1L;
@@ -191,7 +191,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "notjohn@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getCardBalance_noAccess() throws Exception
     {
         Long cardId = 1L;
@@ -208,7 +208,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getCardBalance_notFound() throws Exception
     {
         Long cardId = 999L;
@@ -225,7 +225,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getAllCardsForUser_successOwner() throws Exception
     {
         Long userId = 1L;
@@ -263,7 +263,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     void getAllCardForUser_successAdmin() throws Exception
     {
         Long userId = 99L;
@@ -302,7 +302,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getAllCardsForUser_forbiddenNotOwner() throws Exception
     {
         Long userId = 1L;
@@ -318,7 +318,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void getAllCardsForUser_userNotFound() throws Exception
     {
         Long userId = 999L;
@@ -334,7 +334,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void depositMoney_success() throws Exception
     {
         DepositMoneyRequest moneyRequest = new DepositMoneyRequest(
@@ -355,7 +355,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void depositMoney_forbiddenNotOwner() throws Exception
     {
         DepositMoneyRequest moneyRequest = new DepositMoneyRequest(
@@ -376,7 +376,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void depositMoney_cardNotFound() throws Exception
     {
         DepositMoneyRequest moneyRequest = new DepositMoneyRequest(
@@ -397,7 +397,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void transferMoney_success() throws Exception
     {
         TransferMoneyRequest moneyRequest = new TransferMoneyRequest(
@@ -419,7 +419,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void transferMoney_forbiddenNotOwner() throws Exception
     {
         TransferMoneyRequest moneyRequest = new TransferMoneyRequest(
@@ -442,7 +442,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    @WithMockUser(authorities = "USER")
     void transferMoney_notAcceptableTransfer() throws Exception
     {
         TransferMoneyRequest moneyRequest = new TransferMoneyRequest(
@@ -464,7 +464,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     void getAllCards_successful() throws Exception
     {
         GetCardResponse getCardResponse = new GetCardResponse(
@@ -503,7 +503,7 @@ class CardControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "john@mail.com", authorities = "ADMIN")
+    @WithMockUser(authorities = "ADMIN")
     void gotAllCards_cardsNotFound() throws Exception
     {
         when(cardService.getAllCards(0, 10)).thenThrow(new CardNotFoundException("Cards not found"));
