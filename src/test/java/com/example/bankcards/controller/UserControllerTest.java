@@ -2,6 +2,7 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.security.JwtFilter;
 import com.example.bankcards.service.UserAuthService;
 import com.example.bankcards.service.UserService;
@@ -75,4 +76,108 @@ class UserControllerTest
         verify(userService).getUser(userId);
     }
 
+    @Test
+    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    void getUser_notFound() throws Exception
+    {
+        Long userId = 1L;
+
+        when(userService.getUser(userId)).thenThrow(new UserNotFoundException("User not found"));
+
+        when(userService.isOwner(eq(userId), any())).thenReturn(true);
+
+        mockMvc.perform(get("/user/{user_id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User not found"));
+
+        verify(userService).getUser(userId);
+    }
+
+    @Test
+    @WithMockUser(username = "johnadmin@mail.com", authorities = "ADMIN")
+    void deleteUser_success() throws Exception
+    {
+        Long userId = 1L;
+
+        when(userService.deleteUser(userId)).thenReturn(ResponseEntity.ok("User deleted successfully"));
+
+        mockMvc.perform(delete("/user/{user_id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User deleted successfully"));
+
+        verify(userService).deleteUser(userId);
+    }
+
+    @Test
+    @WithMockUser(username = "johnadmin@mail.com", authorities = "ADMIN")
+    void deleteUser_notFound() throws Exception
+    {
+        Long userId = 1L;
+
+        when(userService.deleteUser(userId)).thenThrow(new UserNotFoundException("User not found"));
+
+        mockMvc.perform(delete("/user/{user_id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User not found"));
+
+        verify(userService).deleteUser(userId);
+    }
+
+    @Test
+    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    void updateUser_success() throws Exception
+    {
+        Long userId = 1L;
+
+        User updatedUser = new User(
+                1L,
+                "john@mail.com",
+                "newjohn123",
+                "John Doe",
+                Role.USER
+        );
+
+        when(userService.updateUser(eq(userId), any(User.class)))
+                .thenReturn(ResponseEntity.ok("User updated successfully"));
+
+        when(userService.isOwner(eq(userId), any())).thenReturn(true);
+
+        mockMvc.perform(put("/user/{user_id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedUser)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User updated successfully"));
+
+        verify(userService).updateUser(eq(userId), any(User.class));
+    }
+
+    @Test
+    @WithMockUser(username = "john@mail.com", authorities = "USER")
+    void updateUser_notFound() throws Exception
+    {
+        Long userId = 1L;
+        User updatedUser = new User(
+                1L,
+                "john@mail.com",
+                "newjohn123",
+                "John Doe",
+                Role.USER
+        );
+
+        when(userService.updateUser(eq(userId), any(User.class)))
+                .thenThrow(new UserNotFoundException("User not found"));
+
+        when(userService.isOwner(eq(userId), any())).thenReturn(true);
+
+        mockMvc.perform(put("/user/{user_id}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedUser)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User not found"));
+
+        verify(userService).updateUser(eq(userId), any(User.class));
+    }
 }

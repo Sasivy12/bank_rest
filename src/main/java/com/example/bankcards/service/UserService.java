@@ -26,7 +26,7 @@ public class UserService
     public ResponseEntity<String> deleteUser(Long userId)
     {
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new  UserNotFoundException("User not found"));
+                () -> new UserNotFoundException("User not found"));
 
         userRepository.delete(user);
 
@@ -36,7 +36,7 @@ public class UserService
     public ResponseEntity<String> updateUser(Long userId, User updatedUser)
     {
         User exisitingUser = userRepository.findById(userId).orElseThrow(
-                () -> new  UserNotFoundException("User not found"));
+                () -> new UserNotFoundException("User not found"));
 
         exisitingUser.setEmail(updatedUser.getEmail());
         exisitingUser.setRole(updatedUser.getRole());

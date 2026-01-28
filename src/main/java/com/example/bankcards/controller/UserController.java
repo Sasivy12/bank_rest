@@ -85,9 +85,7 @@ public class UserController
     }
 
     @Operation(summary = "Обновление пользователя")
-    @PreAuthorize("hasAuthority('USER') " +
-            "and @userService.getUser(#userId).body.email == authentication.principal.username " +
-            "or hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or @userService.isOwner(#userId, authentication)")
     @PutMapping("/user/{user_id}")
     @ApiResponses(value =
             {
