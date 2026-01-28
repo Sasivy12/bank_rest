@@ -4,6 +4,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ public class UserService
        return ResponseEntity.ok(user);
     }
 
+    @Transactional
     public ResponseEntity<String> deleteUser(Long userId)
     {
         User user = userRepository.findById(userId).orElseThrow(
@@ -33,6 +35,7 @@ public class UserService
         return ResponseEntity.ok("User deleted successfully");
     }
 
+    @Transactional
     public ResponseEntity<String> updateUser(Long userId, User updatedUser)
     {
         User exisitingUser = userRepository.findById(userId).orElseThrow(

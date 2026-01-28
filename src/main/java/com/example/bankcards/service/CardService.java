@@ -9,6 +9,7 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.CardUtils;
 import com.example.bankcards.util.CreditCardNumberGenerator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ public class CardService
 
     private final CreditCardNumberGenerator generator = new CreditCardNumberGenerator();
 
+    @Transactional
     public ResponseEntity<CreateCardResponse> createCard(CreateCardRequest request)
     {
         Card card = new Card();
@@ -61,6 +63,7 @@ public class CardService
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     public ResponseEntity<String> changeCardStatus(ChangeCardStatusRequest request)
     {
         Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
@@ -73,6 +76,7 @@ public class CardService
         return ResponseEntity.ok("Card status changed successfully");
     }
 
+    @Transactional
     public ResponseEntity<String> deleteCard(Long cardId)
     {
         Card card = cardRepository.findById(cardId).orElseThrow(
@@ -151,6 +155,7 @@ public class CardService
         );
     }
 
+    @Transactional
     public ResponseEntity<String> depositMoney(DepositMoneyRequest request)
     {
         Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
@@ -176,6 +181,7 @@ public class CardService
         return ResponseEntity.ok("Sum of: " + request.getSum() + " successfully deposited");
     }
 
+    @Transactional
     public ResponseEntity<String> transferMoney(TransferMoneyRequest request)
     {
         Card firstCard = cardRepository.findById(request.getFirstCardId()).orElseThrow(
