@@ -44,7 +44,7 @@ public class UserService
         exisitingUser.setEmail(updatedUser.getEmail());
         exisitingUser.setRole(updatedUser.getRole());
         exisitingUser.setFullName(updatedUser.getFullName());
-        exisitingUser.setPassword(exisitingUser.getPassword());
+        exisitingUser.setPassword(updatedUser.getPassword());
 
         userRepository.save(exisitingUser);
 

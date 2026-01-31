@@ -1,8 +1,10 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.LoginRequest;
 import com.example.bankcards.dto.RegisterRequest;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.AuthenticationFailedException;
 import com.example.bankcards.exception.UserAlreadyExistsException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.security.JwtFilter;
@@ -226,5 +228,48 @@ class UserControllerTest
                 .andExpect(jsonPath("$.message").value("UserAlreadyExistsException"));
 
         verify(userAuthService).register(any(RegisterRequest.class));
+    }
+
+    @Test
+    void login_successful() throws Exception
+    {
+        LoginRequest loginRequest = new LoginRequest(
+                "john@mail.com",
+                "john123"
+        );
+
+        String jwtToken = "thisisjwt";
+
+        when(userAuthService.verify(any(LoginRequest.class))).thenReturn(jwtToken);
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(jwtToken));
+
+        verify(userAuthService).verify(any(LoginRequest.class));
+    }
+
+    @Test
+    void login_AuthenticationFailed() throws Exception
+    {
+        LoginRequest loginRequest = new LoginRequest(
+                "john@mail.com",
+                "john123"
+        );
+
+        when(userAuthService.verify(any(LoginRequest.class)))
+                .thenThrow(new AuthenticationFailedException("Authentication failed for user: "
+                        + loginRequest.getEmail()));
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message")
+                        .value("Authentication failed for user: john@mail.com"));
+
+        verify(userAuthService).verify(any(LoginRequest.class));
     }
 }

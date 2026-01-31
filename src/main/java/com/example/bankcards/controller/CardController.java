@@ -41,7 +41,6 @@ public class CardController
     @PostMapping("/card/status")
     @PreAuthorize("hasAuthority('ADMIN')")
     @Operation(summary = "Обновление статуса карты (ACTIVE, BLOCKED, EXPIRED)")
-    @Transactional
     @ApiResponses(value =
             {
                     @ApiResponse(responseCode = "200", description = "Успешная операция"),
