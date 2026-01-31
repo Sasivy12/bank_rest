@@ -1,11 +1,14 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.RegisterRequest;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserAlreadyExistsException;
 import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.security.JwtFilter;
 import com.example.bankcards.service.UserAuthService;
 import com.example.bankcards.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -179,5 +182,49 @@ class UserControllerTest
                 .andExpect(jsonPath("$.message").value("User not found"));
 
         verify(userService).updateUser(eq(userId), any(User.class));
+    }
+
+    @Test
+    void register_success() throws Exception
+    {
+        RegisterRequest registerRequest = new RegisterRequest(
+                "john@mail.com",
+                "john123",
+                "John Doe",
+                Role.USER
+        );
+
+        doNothing().when(userAuthService).register(any(RegisterRequest.class));
+
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User john@mail.com registered successfully"));
+
+
+        verify(userAuthService).register(any(RegisterRequest.class));
+    }
+
+    @Test
+    void register_userAlreadyExists() throws Exception
+    {
+        RegisterRequest registerRequest = new RegisterRequest(
+                "john@mail.com",
+                "john123",
+                "John Doe",
+                Role.USER
+        );
+
+        doThrow(new UserAlreadyExistsException("UserAlreadyExistsException"))
+                .when(userAuthService).register(any(RegisterRequest.class));
+
+        mockMvc.perform(post("/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(registerRequest)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("UserAlreadyExistsException"));
+
+        verify(userAuthService).register(any(RegisterRequest.class));
     }
 }
