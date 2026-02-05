@@ -21,7 +21,7 @@ public class CorsConfig
                 Collections.singletonList("muslimov.tim05@gmail.com")
         );
 
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT"));
+        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "DELETE", "PUT", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
 

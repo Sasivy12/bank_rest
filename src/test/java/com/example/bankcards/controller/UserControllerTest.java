@@ -10,7 +10,6 @@ import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.security.JwtFilter;
 import com.example.bankcards.service.UserAuthService;
 import com.example.bankcards.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
