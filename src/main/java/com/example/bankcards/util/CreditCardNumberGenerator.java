@@ -1,7 +1,10 @@
 package com.example.bankcards.util;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Random;
 
+@Component
 public class CreditCardNumberGenerator
 {
     private Random random = new Random(System.currentTimeMillis());

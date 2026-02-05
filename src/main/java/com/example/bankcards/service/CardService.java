@@ -29,7 +29,7 @@ public class CardService
 
     private final UserRepository userRepository;
 
-    private final CreditCardNumberGenerator generator = new CreditCardNumberGenerator();
+    private final CreditCardNumberGenerator generator;
 
     @Transactional
     public ResponseEntity<CreateCardResponse> createCard(CreateCardRequest request)
