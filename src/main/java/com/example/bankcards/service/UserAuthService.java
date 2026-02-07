@@ -15,6 +15,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Сервис для регистрации и аутентификации пользователей в системе
+ */
 @Service
 @RequiredArgsConstructor
 public class UserAuthService
@@ -27,6 +30,11 @@ public class UserAuthService
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    /**
+     * Метод для регистрации пользователя в системе
+     * @param request объекст с данными для регистрации пользователя
+     * @throws UserAlreadyExistsException если пользователь с таким email уже зарегистрирован
+     */
     @Transactional
     public void register(RegisterRequest request)
     {
@@ -55,6 +63,12 @@ public class UserAuthService
         }
     }
 
+    /**
+     * Метод для верификации пользователя
+     * @param loginRequest объект с данными для верификации пользователя в системе
+     * @return Возвращает строку с jwt-токеном при успешной аунтефикации
+     * @throws AuthenticationFailedException если аунтефикация оказалась неуспешной
+     */
     @Transactional
     public String verify(LoginRequest loginRequest)
     {
