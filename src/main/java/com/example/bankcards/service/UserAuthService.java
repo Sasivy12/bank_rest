@@ -67,7 +67,7 @@ public class UserAuthService
      * Метод для верификации пользователя
      * @param loginRequest объект с данными для верификации пользователя в системе
      * @return Возвращает строку с jwt-токеном при успешной аунтефикации
-     * @throws AuthenticationFailedException если аунтефикация оказалась неуспешной
+     * @throws AuthenticationFailedException если аутентификация не удалась
      */
     @Transactional
     public String verify(LoginRequest loginRequest)
