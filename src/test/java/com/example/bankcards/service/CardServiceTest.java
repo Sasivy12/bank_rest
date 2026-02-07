@@ -3,7 +3,6 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.*;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
-import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.*;
 import com.example.bankcards.repository.CardRepository;
@@ -20,14 +19,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import org.springframework.data.domain.Pageable;
 import java.sql.Date;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
