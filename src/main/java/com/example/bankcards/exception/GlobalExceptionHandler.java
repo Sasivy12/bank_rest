@@ -58,11 +58,26 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleUnavailableTransferException(AccessDeniedException ex)
+    @ExceptionHandler(UnavailableTransferException.class)
+    public ResponseEntity<ErrorResponse> handleUnavailableTransferException(UnavailableTransferException ex)
     {
         ErrorResponse errorResponse = new ErrorResponse("ACCESS_DENIED", ex.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
+            AuthorizationDeniedException ex
+    )
+    {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "ACCESS_DENIED",
+                "You do not have permission to access this resource"
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(errorResponse);
     }
 }

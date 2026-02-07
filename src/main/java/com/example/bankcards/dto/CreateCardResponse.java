@@ -5,21 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class CardResponse
+public class CreateCardResponse
 {
-    private Long id;
+    private String cardNumber;
 
-    private String maskedCardNumber;
-
-    private String ownerName;
+    private String ownerFullName;
 
     private String expirationDate;
 
     private double balance;
 
     private CardStatus status;
-
 }

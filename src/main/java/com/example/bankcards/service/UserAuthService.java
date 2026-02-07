@@ -7,6 +7,7 @@ import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.AuthenticationFailedException;
 import com.example.bankcards.exception.UserAlreadyExistsException;
 import com.example.bankcards.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +27,7 @@ public class UserAuthService
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
+    @Transactional
     public void register(RegisterRequest request)
     {
         User user = new User();
@@ -53,6 +55,7 @@ public class UserAuthService
         }
     }
 
+    @Transactional
     public String verify(LoginRequest loginRequest)
     {
         try

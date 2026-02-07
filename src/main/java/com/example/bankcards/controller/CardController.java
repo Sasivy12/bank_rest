@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class CardController
                     @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
                     @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
             })
-    public ResponseEntity<Card> createCard(@Valid @RequestBody CreateCardRequest request)
+    public ResponseEntity<CreateCardResponse> createCard(@Valid @RequestBody CreateCardRequest request)
     {
         return cardService.createCard(request);
     }

@@ -9,6 +9,7 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.CardUtils;
 import com.example.bankcards.util.CreditCardNumberGenerator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +29,10 @@ public class CardService
 
     private final UserRepository userRepository;
 
-    private final CreditCardNumberGenerator generator = new CreditCardNumberGenerator();
+    private final CreditCardNumberGenerator generator;
 
-    public ResponseEntity<Card> createCard(CreateCardRequest request)
+    @Transactional
+    public ResponseEntity<CreateCardResponse> createCard(CreateCardRequest request)
     {
         Card card = new Card();
         User cardHolder = userRepository.findById(request.getOwnerId()).orElseThrow(
@@ -43,7 +45,6 @@ public class CardService
         }
 
         card.setCardNumber(cardNumber);
-
         card.setOwner(cardHolder);
         card.setBalance(0);
         card.setExpirationDate(request.getExpirationDate());
@@ -51,9 +52,18 @@ public class CardService
 
         cardRepository.save(card);
 
-        return ResponseEntity.ok(card);
+        CreateCardResponse response = new CreateCardResponse(
+                card.getCardNumber(),
+                card.getOwner().getFullName(),
+                new SimpleDateFormat("MM/yy").format(card.getExpirationDate()),
+                card.getBalance(),
+                card.getStatus()
+        );
+
+        return ResponseEntity.ok(response);
     }
 
+    @Transactional
     public ResponseEntity<String> changeCardStatus(ChangeCardStatusRequest request)
     {
         Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
@@ -66,6 +76,7 @@ public class CardService
         return ResponseEntity.ok("Card status changed successfully");
     }
 
+    @Transactional
     public ResponseEntity<String> deleteCard(Long cardId)
     {
         Card card = cardRepository.findById(cardId).orElseThrow(
@@ -89,7 +100,7 @@ public class CardService
         }
         else
         {
-            throw new AccessDeniedException("You do not own this card");
+            throw new UnavailableTransferException("You do not own this card");
         }
     }
 
@@ -108,7 +119,7 @@ public class CardService
 
         if (!owner.getEmail().equals(currentEmail) && !isAdmin)
         {
-            throw new AccessDeniedException("You can access only your own cards");
+            throw new UnavailableTransferException("You can access only your own cards");
         }
 
         Pageable pageable = PageRequest.of(page, size);
@@ -120,8 +131,8 @@ public class CardService
             throw new CardNotFoundException("Cards not found");
         }
 
-        List<CardResponse> cardResponses = userCards.getContent().stream()
-                .map(card -> new CardResponse(
+        List<GetCardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new GetCardResponse(
                         card.getId(),
                         CardUtils.maskCardNumber(card.getCardNumber()),
                         card.getOwner().getFullName(),
@@ -144,6 +155,7 @@ public class CardService
         );
     }
 
+    @Transactional
     public ResponseEntity<String> depositMoney(DepositMoneyRequest request)
     {
         Card card = cardRepository.findByCardNumber(request.getCardNumber()).orElseThrow(
@@ -153,7 +165,7 @@ public class CardService
 
         if(!card.getOwner().getEmail().equals(currentEmail))
         {
-            throw new AccessDeniedException("You do not own this card");
+            throw new UnavailableTransferException("You do not own this card");
         }
 
         if(request.getSum() > 0)
@@ -169,6 +181,7 @@ public class CardService
         return ResponseEntity.ok("Sum of: " + request.getSum() + " successfully deposited");
     }
 
+    @Transactional
     public ResponseEntity<String> transferMoney(TransferMoneyRequest request)
     {
         Card firstCard = cardRepository.findById(request.getFirstCardId()).orElseThrow(
@@ -179,7 +192,7 @@ public class CardService
 
         if(!firstCard.getOwner().getEmail().equals(secondCard.getOwner().getEmail()))
         {
-            throw new AccessDeniedException("You can only transfer money to your own cards");
+            throw new UnavailableTransferException("You can only transfer money to your own cards");
         }
 
         if(request.getAmount() > 0 && firstCard.getBalance() >= request.getAmount() &&
@@ -191,7 +204,7 @@ public class CardService
             cardRepository.save(firstCard);
             cardRepository.save(secondCard);
 
-            return ResponseEntity.ok("Transfer successfull");
+            return ResponseEntity.ok("Transfer successful");
         }
         else
         {
@@ -199,7 +212,7 @@ public class CardService
         }
     }
 
-        public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
+    public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
     {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -210,8 +223,8 @@ public class CardService
             throw new CardNotFoundException("Cards not found");
         }
 
-        List<CardResponse> cardResponses = userCards.getContent().stream()
-                .map(card -> new CardResponse(
+        List<GetCardResponse> cardResponses = userCards.getContent().stream()
+                .map(card -> new GetCardResponse(
                         card.getId(),
                         CardUtils.maskCardNumber(card.getCardNumber()),
                         card.getOwner().getFullName(),
