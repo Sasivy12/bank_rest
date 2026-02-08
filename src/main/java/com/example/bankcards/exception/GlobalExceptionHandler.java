@@ -66,18 +66,4 @@ public class GlobalExceptionHandler
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
-            AuthorizationDeniedException ex
-    )
-    {
-        ErrorResponse errorResponse = new ErrorResponse(
-                "ACCESS_DENIED",
-                "You do not have permission to access this resource"
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
-                .body(errorResponse);
-    }
 }

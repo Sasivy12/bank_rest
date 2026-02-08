@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Сущность пользователя
+ */
 @RequiredArgsConstructor
 @Entity
 @Table(name = "users")
@@ -15,16 +18,21 @@ import lombok.Setter;
 @AllArgsConstructor
 public class User
 {
+    /** Идентифкатор пользователя **/
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    /** Email пользователя **/
     private String email;
 
+    /** Пароль пользователя **/
     private String password;
 
+    /** Полное имя пользователя **/
     private String fullName;
 
+    /** Роль пользователя (USER, ADMIN) **/
     @Enumerated(EnumType.STRING)
     private Role role;
 }

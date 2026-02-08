@@ -3,6 +3,8 @@ package com.example.bankcards.controller;
 import com.example.bankcards.dto.LoginRequest;
 import com.example.bankcards.dto.RegisterRequest;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.AuthenticationFailedException;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.service.UserAuthService;
 import com.example.bankcards.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+/**
+ * REST-контроллер для управления пользователями
+ */
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "Управление пользователями",
@@ -25,6 +30,14 @@ public class UserController
 
     private final UserAuthService userAuthService;
 
+    /**
+     * Регистрирует нового пользователя в системе.
+     * При успешной регистрации пользователь сохраняется в базе данных
+     * Если пользователь с таким email уже сущетвует - выбрасывает исключение
+     * @param request объект с данными для регистрации пользователя
+     * @return Response Entity с сообщением об успешной регистрации пользователя
+     * @throws UserNotFoundException если пользователь с таким email уже сущетвует
+     */
     @PostMapping("/register")
     @Operation(summary = "Регистрация нового пользователя")
     @ApiResponses(value =
@@ -41,6 +54,12 @@ public class UserController
         return ResponseEntity.ok("User " + request.getEmail() + " registered successfully");
     }
 
+    /**
+     * Выполняет аунтефикацию пользователя в системе
+     * @param loginRequest объект с email и паролем пользователя
+     * @return jwt-token при успешной аунтефикации
+     * @throws AuthenticationFailedException если email и пароль некорректны
+     */
     @PostMapping("/login")
     @Operation(summary = "Вход пользователя в систему")
     @ApiResponses(value =
@@ -54,6 +73,12 @@ public class UserController
         return userAuthService.verify(loginRequest);
     }
 
+    /**
+     * Выполняет получение данных пользователя по идентефикатору
+     * @param userId уникальный идентификатор пользователя
+     * @return Response Entity с данными пользователя
+     * @throws UserNotFoundException если пользователь с таким id не найден
+     */
     @GetMapping("/user/{user_id}")
     @PreAuthorize("hasAuthority('ADMIN') or @userService.isOwner(#userId, authentication)")
     @Operation(summary = "Получение пользователя по идентификатору")
@@ -69,6 +94,12 @@ public class UserController
         return userService.getUser(userId);
     }
 
+    /**
+     * Выполняет удаление пользователя из базы данных
+     * @param userId уникальный идентификатор пользователя
+     * @return Response Entity с сообщением об успешном удалении пользователя
+     * @throws UserNotFoundException если пользователь с таким id не найден
+     */
     @Operation(summary = "Удаление пользователя")
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/user/{user_id}")
@@ -84,6 +115,13 @@ public class UserController
         return userService.deleteUser(userId);
     }
 
+    /**
+     * Выполняет обновление данных пользователя
+     * @param userId уникальный идентификатор пользователя
+     * @param user пользователь с обновленными данными
+     * @return ResponseEntity с сообщением об успешном обновлении пользователя
+     * @throws UserNotFoundException если пользователь с таким id не найден
+     */
     @Operation(summary = "Обновление пользователя")
     @PreAuthorize("hasAuthority('ADMIN') or @userService.isOwner(#userId, authentication)")
     @PutMapping("/user/{user_id}")

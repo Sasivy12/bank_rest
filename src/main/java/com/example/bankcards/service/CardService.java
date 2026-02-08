@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+/**
+ * Сервис для управления банковскими картами
+ */
 @Service
 @RequiredArgsConstructor
 public class CardService
@@ -31,6 +34,12 @@ public class CardService
 
     private final CreditCardNumberGenerator generator;
 
+    /**
+     * Метод для создания банковской карты
+     * @param request Объект с данными для создания карты
+     * @return Response Entity с данными созданной карты
+     * @throws UserNotFoundException если пользователь с таким id не найден
+     */
     @Transactional
     public ResponseEntity<CreateCardResponse> createCard(CreateCardRequest request)
     {
@@ -63,6 +72,12 @@ public class CardService
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Метод для изменения статуса карты (Active, Blocked, Expired)
+     * @param request Объект с данными для с изменения статуса карты
+     * @return Response Entity с сообщением об успешном изменении статуса карты
+     * @throws CardNotFoundException если карта с таким номером не найдена
+     */
     @Transactional
     public ResponseEntity<String> changeCardStatus(ChangeCardStatusRequest request)
     {
@@ -76,6 +91,12 @@ public class CardService
         return ResponseEntity.ok("Card status changed successfully");
     }
 
+    /**
+     * Метод для удаления карты
+     * @param cardId идентификатор карты
+     * @return Response Entity с сообщением об успешном удалении карты
+     * @throws CardNotFoundException если карта с таким идентификатором не найдена
+     */
     @Transactional
     public ResponseEntity<String> deleteCard(Long cardId)
     {
@@ -87,6 +108,13 @@ public class CardService
         return ResponseEntity.ok("Card deleted successfully");
     }
 
+    /**
+     * Метод для получения баланса карты
+     * @param cardId идентфикатор карты
+     * @return ResponseEntity с балансом карты
+     * @throws CardNotFoundException если карта с таким идентификатором не найдена
+     * @throws UnavailableTransferException если пользователь пытается получить баланс карты, которая ему не принадлежит
+     */
     public ResponseEntity<Double> getCardBalance(Long cardId)
     {
         Card card = cardRepository.findById(cardId).orElseThrow(
@@ -104,6 +132,16 @@ public class CardService
         }
     }
 
+    /**
+     * Метод для получения всех карт вользователя
+     * @param userId идентификатор пользователя
+     * @param page номер страницы
+     * @param size количество элементов на странице
+     * @return ResponseEntity с объектом содержащим список карт и информацию о пагинации
+     * @throws UserNotFoundException если пользователь с таким id не найден
+     * @throws UnavailableTransferException если пользователь не является владельцем карт и не имеет роли Admin
+     * @throws CardNotFoundException если у пользователя нет карт
+     */
     public ResponseEntity<CardPageResponse> getAllCardsForUser(Long userId, int page, int size)
     {
         String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -155,6 +193,13 @@ public class CardService
         );
     }
 
+    /**
+     * Метод для внесения денег на баланс карты
+     * @param request объект с данными для депозита денег на баланс карты пользователя
+     * @return Response Entity с сообщением об успешном внесении денег на баланс
+     * @throws CardNotFoundException если карта с таким номером не найдена
+     * @throws IncorrectSumException если сумма депозита  <= 0
+     */
     @Transactional
     public ResponseEntity<String> depositMoney(DepositMoneyRequest request)
     {
@@ -181,6 +226,15 @@ public class CardService
         return ResponseEntity.ok("Sum of: " + request.getSum() + " successfully deposited");
     }
 
+    /**
+     * Метод для перевода денег с одной карты на другую карту того же пользователя
+     * @param request объект с данными для перевода денег с карты на карту
+     * @return Response Entity с сообщением об успешном переводе денег
+     * @throws CardNotFoundException если карты с данными id не были найдены
+     * @throws UnavailableTransferException если пользователь не является владельцем обеих карт
+     * @throws NotAcceptableTransferException если карты не активны,
+     * если баланс первой карты меньше, чем сумма перевода и если сумма перевода <=0
+     */
     @Transactional
     public ResponseEntity<String> transferMoney(TransferMoneyRequest request)
     {
@@ -212,6 +266,13 @@ public class CardService
         }
     }
 
+    /**
+     * Метод для получения всех банковских карт в системе
+     * @param page номер страницы
+     * @param size количество элементов на странице
+     * @return Response Entity с объектом, содержащим список всех карт и данные пагинации
+     * @throws CardNotFoundException если карт в системе нет
+     */
     public ResponseEntity<CardPageResponse> getAllCards(int page, int size)
     {
         Pageable pageable = PageRequest.of(page, size);

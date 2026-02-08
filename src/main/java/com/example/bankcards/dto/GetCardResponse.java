@@ -5,21 +5,30 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * DTO для передачи информации о банковской карте клиенту.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 public class GetCardResponse
 {
+    /** ID карты **/
     private Long id;
 
+    /** Замаскированный номер карты **/
     private String maskedCardNumber;
 
+    /** Полное имя владельца карты */
     private String ownerName;
 
+    /** Дата окончания срока действия карты **/
     private String expirationDate;
 
+    /** Баланс карты **/
     private double balance;
 
+    /** Статус карты (ACTIVE, EXPIRED, BLOCKED) **/
     private CardStatus status;
 
 }
